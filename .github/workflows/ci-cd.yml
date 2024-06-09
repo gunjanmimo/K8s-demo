@@ -58,5 +58,5 @@ jobs:
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          python manage.py migrate
-          python manage.py test
+          python backend/manage.py runserver
+          python backend/manage.py test

@@ -1,6 +1,6 @@
 # --------------------------------PYTHON IMPORTS--------------------------------#
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 import json
 import numpy as np
@@ -120,8 +120,10 @@ class AzureImageMessageQueue:
         processing_end_at = time.time()
 
         # Convert timestamps to datetime objects
-        processing_start_time = datetime.fromtimestamp(processing_started_at)
-        processing_end_time = datetime.fromtimestamp(processing_end_at)
+        processing_start_time = datetime.fromtimestamp(
+            processing_started_at, tz=timezone.utc
+        )
+        processing_end_time = datetime.fromtimestamp(processing_end_at, tz=timezone.utc)
 
         # update the task status to completed
         task.status = "completed"

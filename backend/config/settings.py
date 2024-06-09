@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+
 import os
 from pathlib import Path
 from datetime import datetime, timedelta
 import base64
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,7 +78,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # ENVIRONMENT VARIABLES
-DB_ENGINE = os.environ.get("DB_ENGINE") 
+DB_ENGINE = os.environ.get("DB_ENGINE")
 DB_NAME = os.environ.get("DB_NAME")
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
@@ -89,9 +91,9 @@ AZURE_CONTAINER_NAME = os.environ.get("AZURE_CONTAINER_NAME")
 AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 AZURE_QUEUES_NAME = os.environ.get("AZURE_QUEUES_NAME")
 
-IS_BASE_64 = os.environ.get("IS_BASE_64", None) 
+IS_BASE_64 = os.environ.get("IS_BASE_64", None)
 
-
+# CHECK IF ENVIRONMENT VARIABLES ARE BASE64 ENCODED(ONLY WHEN RUNNING FROM KUBERNETES)
 if IS_BASE_64:
     # CONVERT ENVIRONMENT VARIABLES FROM BASE64 TO STRING
     DB_ENGINE = base64.b64decode(DB_ENGINE).decode("utf-8")
@@ -103,24 +105,21 @@ if IS_BASE_64:
     AZURE_ACCOUNT_NAME = base64.b64decode(AZURE_ACCOUNT_NAME).decode("utf-8")
     AZURE_ACCOUNT_KEY = base64.b64decode(AZURE_ACCOUNT_KEY).decode("utf-8")
     AZURE_CONTAINER_NAME = base64.b64decode(AZURE_CONTAINER_NAME).decode("utf-8")
-    AZURE_STORAGE_CONNECTION_STRING = base64.b64decode(AZURE_STORAGE_CONNECTION_STRING).decode("utf-8")
+    AZURE_STORAGE_CONNECTION_STRING = base64.b64decode(
+        AZURE_STORAGE_CONNECTION_STRING
+    ).decode("utf-8")
     AZURE_QUEUES_NAME = base64.b64decode(AZURE_QUEUES_NAME).decode("utf-8")
-    
-    
-
 
 
 # Database
 DATABASES = {
-    'default': {
-        
-        'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME, 
-        'USER': DB_USER, 
-        'PASSWORD': DB_PASSWORD, 
-        'HOST': DB_HOST, 
-        'PORT': DB_PORT,  
-        
+    "default": {
+        "ENGINE": DB_ENGINE,
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
     }
 }
 # Password validation
@@ -163,16 +162,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-
-# # get from env
-# AZURE_ACCOUNT_NAME = 
-# AZURE_ACCOUNT_KEY = os.environ.get("AZURE_ACCOUNT_KEY")
-# AZURE_CONTAINER_NAME = os.environ.get("AZURE_CONTAINER_NAME")
-# AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
-# AZURE_QUEUES_NAME = os.environ.get("AZURE_QUEUES_NAME")
-
-
-# # Django APScheduler
-# APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"  # Default
-# APSCHEDULER_RUN_NOW_TIMEOUT = 5  # Default, seconds

@@ -1,10 +1,15 @@
+# --------------------------------PYTHON IMPORTS--------------------------------#
 import time
 from datetime import datetime
 import requests
 import json
 import numpy as np
+
+# --------------------------------AZURE IMPORTS--------------------------------#
 from azure.storage.queue import QueueServiceClient
 from azure.storage.blob import BlobServiceClient
+
+# --------------------------------DJANGO IMPORTS--------------------------------#
 from django.conf import settings
 
 # ------------------------------ LOCAL IMPORTS ------------------------------ #
@@ -14,8 +19,14 @@ from image_processing import process_image
 
 
 class AzureImageMessageQueue:
-    def __init__(self):
+    """
+    A class to handle image processing tasks using Azure Queue and Blob Storage services.
+    """
 
+    def __init__(self):
+        """
+        Initialize the blob storage client and the queue client.
+        """
         # initialize the blob storage client
         self.blob_storage = AzureBlobStorage()
 
@@ -27,8 +38,18 @@ class AzureImageMessageQueue:
             settings.AZURE_QUEUES_NAME
         )
 
-    # push message to queue
     def push_message(self, file: bytes, file_name: str, task_id: int) -> str:
+        """
+        Push a message to the queue and upload the file to blob storage.
+
+        Args:
+            file (bytes): The file to upload.
+            file_name (str): The name of the file.
+            task_id (int): The ID of the task.
+
+        Returns:
+            str: The URL of the uploaded image.
+        """
         try:
             image_url = self.blob_storage.upload_file(file=file, file_name=file_name)
             message_content = json.dumps(
@@ -42,11 +63,12 @@ class AzureImageMessageQueue:
             raise
 
     def pull_message(self) -> None:
+        """
+        Pull messages from the queue and process them.
+        """
         messages = self.queue_client.receive_messages(max_messages=5)
         for msg_batch in messages.by_page():
             for msg in msg_batch:
-                
-                
                 task_id = json.loads(msg.content)["task_id"]
                 self.process_message(task_id)
 
@@ -55,11 +77,17 @@ class AzureImageMessageQueue:
                     print(f"Deleted message with ID: {msg.id}")
                 except Exception as e:
                     print(f"Error deleting message: {e}")
-                
-    
 
-        
     def process_message(self, task_id) -> bool:
+        """
+        Process a message by retrieving the task, processing the image, and updating the task status.
+
+        Args:
+            task_id (int): The ID of the task to process.
+
+        Returns:
+            bool: True if the task was processed successfully, False otherwise.
+        """
         try:
             task = ImageProcessingTask.objects.get(id=task_id)
         except ImageProcessingTask.DoesNotExist:
@@ -90,7 +118,7 @@ class AzureImageMessageQueue:
             processed_image_byte, file_name
         )
         processing_end_at = time.time()
-        
+
         # Convert timestamps to datetime objects
         processing_start_time = datetime.fromtimestamp(processing_started_at)
         processing_end_time = datetime.fromtimestamp(processing_end_at)

@@ -1,0 +1,17 @@
+# django requirements
+django
+djangorestframework
+environs
+kombu
+django-apscheduler
+gunicorn
+psycopg2-binary
+# azure requirements
+azure-storage-blob 
+azure-identity
+azure-storage-queue
+
+# python requirements
+opencv-python
+pillow
+numpy

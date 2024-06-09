@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-service
+  template:
+    metadata:
+      labels:
+        app: backend-service
+    spec:
+      containers:
+        - name: backend-service-container
+          image: gunjanmimo/django-app:latest
+          env:
+            - name: base_64
+              value: "true"
+
+
+            - name: DB_ENGINE
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DB_ENGINE
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: POSTGRES_DB
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: POSTGRES_PASSWORD
+
+            - name: AZURE_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AZURE_ACCOUNT_NAME
+            - name: AZURE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AZURE_ACCOUNT_KEY
+            - name: AZURE_CONTAINER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AZURE_CONTAINER_NAME
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AZURE_STORAGE_CONNECTION_STRING
+            - name: AZURE_QUEUES_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: AZURE_QUEUES_NAME
+            
+           
+          ports:
+            - containerPort: 8000

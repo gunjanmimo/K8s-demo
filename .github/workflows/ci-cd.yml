@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -43,6 +44,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h postgres -U $POSTGRES_USER -d $POSTGRES_DB; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+          done
+
       - name: Run Django tests
         env:
           DB_ENGINE: ${{ secrets.DB_ENGINE }}
@@ -58,5 +66,5 @@ jobs:
           AZURE_QUEUES_NAME: ${{ secrets.AZURE_QUEUES_NAME }}
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
-          python backend/manage.py runserver
+          python backend/manage.py migrate
           python backend/manage.py test

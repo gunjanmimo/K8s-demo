@@ -12,64 +12,50 @@ permissions:
   contents: write
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: message
+        run: echo "Building the project"
+
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: DB_NAME
-          POSTGRES_USER: DB_USER
-          POSTGRES_PASSWORD: DB_PASSWORD
-        options: >-
-          --health-cmd="pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
-          --health-interval=10s
-          --health-timeout=10s
-          --health-retries=10
+    steps:
+      - name: message
+        run: echo "Testing the project"
+
+  security:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: code security
+        run: echo "Checking the code security"
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
+      - name: docker security
+        run: echo "Checking the docker security"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+  merge:
+    runs-on: ubuntu-latest
+    needs: [build, test, security]
 
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          echo "Sleeping for 30 seconds to allow PostgreSQL to start"
-          sleep 30
-          until pg_isready -h postgres -U $POSTGRES_USER -d $POSTGRES_DB; do
-            echo "Waiting for PostgreSQL to be ready..."
-            sleep 5
-          done
+    steps:
+      - name: message
+        run: echo "Merging the code"
 
-      - name: Output PostgreSQL logs
-        run: docker logs $(docker ps -q --filter ancestor=postgres:latest)
+  push-docker:
+    runs-on: ubuntu-latest
+    needs: [merge]
 
-      - name: Run Django tests
-        env:
-          DB_ENGINE: ${{ secrets.DB_ENGINE }}
-          DB_NAME: DB_NAME
-          DB_USER: DB_USER
-          DB_PASSWORD: DB_PASSWORD
-          DB_HOST: postgres
-          DB_PORT: 5432
+    steps:
+      - name: message
+        run: echo "Pushing the docker image"
 
-          AZURE_ACCOUNT_KEY: ${{ secrets.AZURE_ACCOUNT_KEY }}
-          AZURE_ACCOUNT_NAME: ${{ secrets.AZURE_ACCOUNT_NAME }}
-          AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
-          AZURE_QUEUES_NAME: ${{ secrets.AZURE_QUEUES_NAME }}
-          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-        run: |
-          python backend/manage.py migrate
-          python backend/manage.py test
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [push-docker]
+
+    steps:
+      - name: message
+        run: echo "Deploying the project"

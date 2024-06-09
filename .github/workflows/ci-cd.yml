@@ -20,9 +20,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: DB_NAME
+          POSTGRES_USER: DB_USER
+          POSTGRES_PASSWORD: DB_PASSWORD
         options: >-
           --health-cmd="pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
           --health-interval=10s
@@ -46,18 +46,17 @@ jobs:
       - name: Run Django tests
         env:
           DB_ENGINE: ${{ secrets.DB_ENGINE }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: DB_NAME
+          DB_USER: DB_USER
+          DB_PASSWORD: DB_PASSWORD
+          DB_HOST: postgres
+          DB_PORT: 5432
 
           AZURE_ACCOUNT_KEY: ${{ secrets.AZURE_ACCOUNT_KEY }}
           AZURE_ACCOUNT_NAME: ${{ secrets.AZURE_ACCOUNT_NAME }}
           AZURE_CONTAINER_NAME: ${{ secrets.AZURE_CONTAINER_NAME }}
           AZURE_QUEUES_NAME: ${{ secrets.AZURE_QUEUES_NAME }}
           AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           python backend/manage.py runserver
           python backend/manage.py test

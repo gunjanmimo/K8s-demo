@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 permissions:
   contents: write
@@ -78,5 +75,16 @@ jobs:
     needs: [docker-push]
 
     steps:
-      - name: Deploy to Azure AKS
-        run: echo "deploying to Azure AKS"
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIAL }}
+
+      - name: Set up Kubectl
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+
+      - name: Deploy to AKS
+        run: |
+          kubectl apply -f k8s/backend_service/.
+          kubectl apply -f k8s/database_service/.

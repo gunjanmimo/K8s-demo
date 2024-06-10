@@ -78,7 +78,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [push-docker]
+    needs: [docker-push]
 
     steps:
       - name: message

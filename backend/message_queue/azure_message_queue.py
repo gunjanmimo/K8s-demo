@@ -70,6 +70,7 @@ class AzureImageMessageQueue:
         for msg_batch in messages.by_page():
             for msg in msg_batch:
                 task_id = json.loads(msg.content)["task_id"]
+                print(f"Processing message with ID: {task_id}")
                 self.process_message(task_id)
 
                 try:

@@ -1,58 +1,114 @@
-<!-- backend/api/templates/frontend.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Processing Frontend</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
       .completed {
         background-color: green;
+        color: white;
       }
       .pending {
         background-color: yellow;
+        color: black;
+      }
+      .upload-drop-zone {
+        height: 200px;
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .upload-drop-zone.dragover {
+        background-color: #e9ecef;
       }
     </style>
   </head>
   <body>
-    <h1>Image Processing</h1>
-    <form id="uploadForm">
-      <input
-        type="file"
-        id="imageUpload"
-        accept="image/jpeg, image/png, image/jpg"
-        required
-      />
-      <button type="submit">Upload</button>
-    </form>
+    <div class="container">
+      <h1 class="mt-5">Image Processing</h1>
+      <form id="uploadForm" class="my-4">
+        <div class="form-group">
+          <div
+            id="uploadDropZone"
+            class="upload-drop-zone"
+            ondrop="handleDrop(event)"
+            ondragover="handleDragOver(event)"
+          >
+            Drag & drop your file here or click to upload
+          </div>
+          <input
+            type="file"
+            class="form-control-file"
+            id="imageUpload"
+            accept="image/jpeg, image/png, image/jpg"
+            style="display: none"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
 
-    <h2>Processing Tasks</h2>
-    <table id="tasksTable" border="1">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Original Image</th>
-          <th>Processed Image</th>
-          <th>Status</th>
-          <th>Upload Time</th>
-          <th>Processing Start Time</th>
-          <th>Processing End Time</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+      <h2>Processing Tasks</h2>
+      <table id="tasksTable" class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>ID</th>
+            <th>Original Image</th>
+            <th>Processed Image</th>
+            <th>Status</th>
+            <th>Upload Time</th>
+            <th>Processing Start Time</th>
+            <th>Processing End Time</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
     <script>
+      const dropZone = document.getElementById("uploadDropZone");
+      const fileInput = document.getElementById("imageUpload");
+
+      dropZone.addEventListener("click", () => fileInput.click());
+
+      function handleDragOver(event) {
+        event.preventDefault();
+        dropZone.classList.add("dragover");
+      }
+
+      function handleDrop(event) {
+        event.preventDefault();
+        dropZone.classList.remove("dragover");
+        const files = event.dataTransfer.files;
+        if (files.length) {
+          fileInput.files = files;
+        }
+      }
+
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files.length) {
+          dropZone.textContent = fileInput.files[0].name;
+        }
+      });
+
       document
         .getElementById("uploadForm")
         .addEventListener("submit", function (e) {
           e.preventDefault();
-          const fileInput = document.getElementById("imageUpload");
           const file = fileInput.files[0];
           const formData = new FormData();
           formData.append("image", file);
 
-          fetch("/api/upload/", {
+          fetch("/apis/upload/", {
             method: "POST",
             body: formData,
           })
@@ -67,9 +123,14 @@
         });
 
       function fetchTasks() {
-        fetch("/api/tasks/")
+        fetch("/apis/tasks/")
           .then((response) => response.json())
           .then((data) => {
+            // Sort tasks by upload time from most recent to oldest
+            data.sort(
+              (a, b) => new Date(b.upload_time) - new Date(a.upload_time)
+            );
+
             const tbody = document
               .getElementById("tasksTable")
               .getElementsByTagName("tbody")[0];
@@ -93,6 +154,25 @@
 
       // Fetch tasks on page load
       fetchTasks();
+
+      // Refresh tasks every 2 seconds
+      setInterval(fetchTasks, 2000);
     </script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+      integrity="sha384-qD6Itz7aa6LUOPOvpr32p+AQDkGZ1nNQv5z5H4CRWiwkL5Kx0mf7lWX5rT3WPGbi"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgI1LAhtR54Xp0cPENIEnBJo2QtDFrRI+uRUdKZb0DYr7VYyF6d"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

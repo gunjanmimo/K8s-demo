@@ -7,13 +7,17 @@ from . import views
 # URL patterns for the Image Processing API
 urlpatterns = [
     # Endpoint for uploading an image
-    path("upload/", views.ImageUploadView.as_view(), name="upload"),
+    path("apis/upload/", views.ImageUploadView.as_view(), name="upload"),
     # Endpoint for listing all image processing tasks
-    path("tasks/", views.ImageUploadView.as_view(), name="tasks"),
+    path("apis/tasks/", views.ImageUploadView.as_view(), name="tasks"),
     # Endpoint for retrieving details of a specific task by ID
-    path("tasks/<int:task_id>/", views.ImageUploadView.as_view(), name="task-detail"),
+    path(
+        "apis/tasks/<int:task_id>/", views.ImageUploadView.as_view(), name="task-detail"
+    ),
     # frontend view
-    path("frontend/", views.frontend_view, name="frontend"),
+    path("", views.frontend_view, name="frontend"),
     # Debug endpoint for processing tasks manually (message queue debug)
-    path("tasks/process/", views.ImageProcessingTaskView.as_view(), name="process"),
+    path(
+        "apis/tasks/process/", views.ImageProcessingTaskView.as_view(), name="process"
+    ),
 ]

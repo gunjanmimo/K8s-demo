@@ -15,4 +15,4 @@ def check_image_processing_message_queue():
     2. Processing the images as specified by the messages.
     """
     print("Checking message queue...")
-    messages = azure_message_queue_client.pull_message()
+    azure_message_queue_client.pull_message()

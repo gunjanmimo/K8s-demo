@@ -1,0 +1,98 @@
+<!-- backend/api/templates/frontend.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Processing Frontend</title>
+    <style>
+      .completed {
+        background-color: green;
+      }
+      .pending {
+        background-color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Image Processing</h1>
+    <form id="uploadForm">
+      <input
+        type="file"
+        id="imageUpload"
+        accept="image/jpeg, image/png, image/jpg"
+        required
+      />
+      <button type="submit">Upload</button>
+    </form>
+
+    <h2>Processing Tasks</h2>
+    <table id="tasksTable" border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Original Image</th>
+          <th>Processed Image</th>
+          <th>Status</th>
+          <th>Upload Time</th>
+          <th>Processing Start Time</th>
+          <th>Processing End Time</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const fileInput = document.getElementById("imageUpload");
+          const file = fileInput.files[0];
+          const formData = new FormData();
+          formData.append("image", file);
+
+          fetch("/api/upload/", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              fetchTasks();
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+
+      function fetchTasks() {
+        fetch("/api/tasks/")
+          .then((response) => response.json())
+          .then((data) => {
+            const tbody = document
+              .getElementById("tasksTable")
+              .getElementsByTagName("tbody")[0];
+            tbody.innerHTML = "";
+            data.forEach((task) => {
+              const row = tbody.insertRow();
+              row.className =
+                task.status === "completed" ? "completed" : "pending";
+              row.innerHTML = `
+                <td>${task.id}</td>
+                <td><a href="${task.original_image_url}" target="_blank">View</a></td>
+                <td><a href="${task.processed_image_url}" target="_blank">View</a></td>
+                <td>${task.status}</td>
+                <td>${task.upload_time}</td>
+                <td>${task.processing_start_time}</td>
+                <td>${task.processing_end_time}</td>
+              `;
+            });
+          });
+      }
+
+      // Fetch tasks on page load
+      fetchTasks();
+    </script>
+  </body>
+</html>

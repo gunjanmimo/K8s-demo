@@ -12,6 +12,8 @@ urlpatterns = [
     path("tasks/", views.ImageUploadView.as_view(), name="tasks"),
     # Endpoint for retrieving details of a specific task by ID
     path("tasks/<int:task_id>/", views.ImageUploadView.as_view(), name="task-detail"),
+    # frontend view
+    path("frontend/", views.frontend_view, name="frontend"),
     # Debug endpoint for processing tasks manually (message queue debug)
     path("tasks/process/", views.ImageProcessingTaskView.as_view(), name="process"),
 ]

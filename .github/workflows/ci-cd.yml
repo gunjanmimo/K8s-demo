@@ -82,5 +82,16 @@ jobs:
     needs: [docker-push]
 
     steps:
-      - name: message
-        run: echo "Deploying the project"
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set up Kubectl
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
+
+      - name: Deploy to AKS
+        run: |
+          kubectl apply -f k8s/database_service/.
+          kubectl apply -f k8s/backend_service/.

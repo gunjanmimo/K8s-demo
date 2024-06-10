@@ -19,7 +19,6 @@ spec:
             - name: base_64
               value: "true"
 
-
             - name: DB_ENGINE
               valueFrom:
                 secretKeyRef:
@@ -76,7 +75,6 @@ spec:
                 secretKeyRef:
                   name: backend-secret
                   key: AZURE_QUEUES_NAME
-            
-           
+
           ports:
             - containerPort: 8000

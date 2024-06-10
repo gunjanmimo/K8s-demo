@@ -2,7 +2,3 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: backend-config
-data:
-  backend-config: |
-    DATABASE_URL = postgresql://admin:password@postgres-service:5432/postgres
-    DB_ECHO = False

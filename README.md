@@ -59,7 +59,7 @@ docker-compose up
 ```
 {
     "id": 37,
-    "original_image_url": "https://holamethinkstask.blob.core.windows.net/images/original/eccd5e89-ef9e-49bf-a6fc-78c9374b179d.jpeg",
+    "original_image_url": "https://task.blob.core.windows.net/images/original/eccd5e89-ef9e-49bf-a6fc-78c9374b179d.jpeg",
     "processed_image_url": null,
     "status": "pending",
     "upload_time": "2024-06-10T15:13:51.837204Z",
@@ -79,8 +79,8 @@ docker-compose up
 [
     {
         "id": 1,
-        "original_image_url": "https://holamethinkstask.blob.core.windows.net/images/original/58575466-37a8-4807-aba3-3a33ea8a21bb.jpg",
-        "processed_image_url": "https://holamethinkstask.blob.core.windows.net/images/processed/58575466-37a8-4807-aba3-3a33ea8a21bb_processed.jpg",
+        "original_image_url": "https://task.blob.core.windows.net/images/original/58575466-37a8-4807-aba3-3a33ea8a21bb.jpg",
+        "processed_image_url": "https://task.blob.core.windows.net/images/processed/58575466-37a8-4807-aba3-3a33ea8a21bb_processed.jpg",
         "status": "completed",
         "upload_time": "2024-06-10T15:36:30.730933Z",
         "processing_start_time": "2024-06-10T15:36:35.579294Z",
@@ -88,8 +88,8 @@ docker-compose up
     },
     {
         "id": 2,
-        "original_image_url": "https://holamethinkstask.blob.core.windows.net/images/original/997036b3-65c1-400b-ac19-003144ca65fe.jpg",
-        "processed_image_url": "https://holamethinkstask.blob.core.windows.net/images/processed/997036b3-65c1-400b-ac19-003144ca65fe_processed.jpg",
+        "original_image_url": "https://task.blob.core.windows.net/images/original/997036b3-65c1-400b-ac19-003144ca65fe.jpg",
+        "processed_image_url": "https://task.blob.core.windows.net/images/processed/997036b3-65c1-400b-ac19-003144ca65fe_processed.jpg",
         "status": "completed",
         "upload_time": "2024-06-10T15:36:45.348888Z",
         "processing_start_time": "2024-06-10T15:36:50.560316Z",
@@ -110,8 +110,8 @@ docker-compose up
 ```
 {
     "id": 1,
-    "original_image_url": "https://holamethinkstask.blob.core.windows.net/images/original/58575466-37a8-4807-aba3-3a33ea8a21bb.jpg",
-    "processed_image_url": "https://holamethinkstask.blob.core.windows.net/images/processed/58575466-37a8-4807-aba3-3a33ea8a21bb_processed.jpg",
+    "original_image_url": "https://task.blob.core.windows.net/images/original/58575466-37a8-4807-aba3-3a33ea8a21bb.jpg",
+    "processed_image_url": "https://task.blob.core.windows.net/images/processed/58575466-37a8-4807-aba3-3a33ea8a21bb_processed.jpg",
     "status": "completed",
     "upload_time": "2024-06-10T15:36:30.730933Z",
     "processing_start_time": "2024-06-10T15:36:35.579294Z",
@@ -188,7 +188,7 @@ GITHUB ACTION SECRET
 ```
 az login 
 
-az aks get-credentials --resource-group methinksAI --name backend-deployment-cluster
+az aks get-credentials --resource-group AI --name backend-deployment-cluster
 
 docker build -t DOCKER_USERNAME/django-app:latest .
 docker push DOCKER_USERNAME/django-app:latest

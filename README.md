@@ -1,4 +1,4 @@
-# k8S Demo
+# Simple k8S Demo
 
 Check the deployed demo [demo](http://68.221.241.38:5000/)
 
